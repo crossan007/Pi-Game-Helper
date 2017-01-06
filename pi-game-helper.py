@@ -2,12 +2,17 @@ import math
 import random
 import time
 import os 
-import Adafruit_GPIO.SPI as SPI
 import Adafruit_SSD1306
 import RPi.GPIO as GPIO  
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+import atexit
+
+def exit_handler():
+    print "exiting"
+    disp.clear()
+    GPIO.cleanup()
 
 def renderDie(number, dimensions):
     width,height = dimensions
@@ -92,11 +97,9 @@ image = Image.new('1', (width, height))
 for x in range(0,11):
     diceImages.append(Image.open(dir_path+'/dice/'+str(x+1)+'.bmp'))
 GPIO.add_event_detect(23, GPIO.FALLING, callback=callback_function_print,bouncetime=500)
+atexit.register(exit_handler)
 
 while True:
     time.sleep(1);
-
-GPIO.cleanup()       # clean up GPIO on CTRL+C exit  
-GPIO.cleanup()           # clean up GPIO on normal exit  
 
 
